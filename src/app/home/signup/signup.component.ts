@@ -1,26 +1,36 @@
+import { PlatformDetectorService } from './../../core/platform/platform-detector.service';
 import { Router } from '@angular/router';
 import { SignUpService } from './signup.service';
 import { UserNotTakenValidatorService } from './user-not-taken.validator.service';
 import { lowerCaseValidator } from './../../shared/lower-case.validators';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NewUser } from './new-user';
 
 @Component({
-    selector: 'ap-signup' ,
-    templateUrl: './signup.component.html'
+    selector: 'ap-signup',
+    templateUrl: './signup.component.html',
+    providers: [
+        UserNotTakenValidatorService
+    ]
 })
 export class SignUpComponent implements OnInit {
 
     signupForm: FormGroup;
+    @ViewChild('emailInput') emailInput: ElementRef<HTMLInputElement>;
 
     constructor( 
         private formBuilder: FormBuilder,
         private userNotTakenValidatorService: UserNotTakenValidatorService,
         private signUpService: SignUpService,
-        private router: Router ) {}
+        private router: Router , 
+        private platformDetectorService: PlatformDetectorService ) {}
 
     ngOnInit(){
+
+        if( this.platformDetectorService.isPlatformBrowser() ){
+            this.emailInput.nativeElement.focus();
+        }
 
         this.signupForm = this.formBuilder.group({
             email: ['',
